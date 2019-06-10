@@ -17,13 +17,36 @@ class Entry:  # This is the entry for a switcheroo
         self.name = name
         self.phoneNumber = phoneNumber
 
-    def isMatch(self, entry):
-        matchingDates = False
+    def isMatch(self, entry):  # lol this isn't working. needs to check BOTH ways
+        matchingOneWay = False
         for alternate in self.alternateList:
             if alternate == entry.date:
-                matchingDates = True
+                matchingOneWay = True
+
+        matchingOtherWay = False
+        for alternate in entry.alternateList:
+            if alternate == self.date:
+                matchingOtherWay = True
+
         matchingType = self.boxType == entry.boxType
-        return matchingDates and matchingType
+
+        return matchingOneWay and matchingOtherWay and matchingType
+
+
+class Entries:
+
+    entries = []
+
+    def addEntry(self, entry):
+        self.entries.append(entry)
+
+    def findMatches(self):
+        matches = []
+        for entry in self.entries:
+            for possibleMatch in self.entries:
+                if entry.isMatch(possibleMatch):
+                    matches.append(entry)
+        return matches
 
 
 class MainWindow:
@@ -37,12 +60,19 @@ class MainWindow:
 
 
 if __name__ == "__main__":
-    switeroo = MainWindow()
-    # switeroo.run()
+    switcheroo = MainWindow()
+    # switcheroo.run()
 
-    entry1 = Entry(datetime.datetime(2019, 6, 23), "Box", datetime.datetime(2019, 6, 15),
+    entry1 = Entry(datetime.datetime(2019, 6, 22), "Box", datetime.datetime(2019, 6, 15),
                    datetime.datetime(2019, 6, 16), datetime.datetime(2019, 6, 17), "Bob", 1111111111)
+
     entry2 = Entry(datetime.datetime(2019, 6, 16), "Box", datetime.datetime(2019, 6, 21),
-                   datetime.datetime(2019, 6, 22), datetime.datetime(2019, 6, 23), "Mary", 1111111111)
+                   datetime.datetime(2019, 6, 22), datetime.datetime(2019, 6, 24), "Mary", 2222222222)
 
     print(entry1.isMatch(entry2))
+
+    entries = Entries()
+    entries.addEntry(entry1)
+    entries.addEntry(entry2)
+
+    print(entries.findMatches())
